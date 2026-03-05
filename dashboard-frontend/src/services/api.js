@@ -8,36 +8,54 @@ import axios from 'axios';
 //   }
 // });
 
+// const API = axios.create({
+//   baseURL: 'https://dashboard-jee-and-react.onrender.com',  // URL de ton backend sur Render
+//   headers: {
+//     'Content-Type': 'application/json',
+//   }
+// });
+
+// // Login function
+// export const login = async (username, password) => {
+//   try {
+//     const response = await API.post('/api/auth/login', { username, password });
+    
+//     // If request succeeds, return user data
+//     return response.data;
+//   } catch (error) {
+//     console.error('API Error:', error.response || error);
+    
+//     // Provide more detailed error information
+//     if (error.response) {
+//       // The server responded with a status code outside the 2xx range
+//       console.log('Status:', error.response.status);
+//       console.log('Data:', error.response.data);
+      
+//       if (error.response.status === 401) {
+//         throw new Error('Invalid credentials');
+//       }
+//     }
+    
+//     // Network error or other issues
+//     throw new Error(error.message || 'Login failed. Please try again.');
+//   }
+// };
+
+
 const API = axios.create({
-  baseURL: 'https://dashboard-jee-and-react.onrender.com',  // URL de ton backend sur Render
-  headers: {
-    'Content-Type': 'application/json',
-  }
+  baseURL: 'https://dashboard-jee-and-react.onrender.com',
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true // si tu utilises cookies pour la session
 });
 
-// Login function
 export const login = async (username, password) => {
   try {
     const response = await API.post('/api/auth/login', { username, password });
-    
-    // If request succeeds, return user data
+    console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error('API Error:', error.response || error);
-    
-    // Provide more detailed error information
-    if (error.response) {
-      // The server responded with a status code outside the 2xx range
-      console.log('Status:', error.response.status);
-      console.log('Data:', error.response.data);
-      
-      if (error.response.status === 401) {
-        throw new Error('Invalid credentials');
-      }
-    }
-    
-    // Network error or other issues
-    throw new Error(error.message || 'Login failed. Please try again.');
+    console.error('Login error:', error.response || error);
+    throw error;
   }
 };
 
