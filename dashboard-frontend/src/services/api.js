@@ -1,8 +1,15 @@
 import axios from 'axios';
 
 // Configure base URL for all requests
+// const API = axios.create({
+//   baseURL: 'http://localhost:9090',  // Match your backend server URL
+//   headers: {
+//     'Content-Type': 'application/json',
+//   }
+// });
+
 const API = axios.create({
-  baseURL: 'http://localhost:9090',  // Match your backend server URL
+  baseURL: 'https://dashboard-jee-and-react.onrender.com',  // URL de ton backend sur Render
   headers: {
     'Content-Type': 'application/json',
   }

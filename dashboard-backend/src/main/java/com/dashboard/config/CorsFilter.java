@@ -1,7 +1,7 @@
 package com.dashboard.config;
 
 import java.io.IOException;
-
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -11,6 +11,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@WebFilter("/*")
 public class CorsFilter implements Filter {
     
 // Update the CORS filter to allow your frontend origin
@@ -18,7 +19,7 @@ public class CorsFilter implements Filter {
 public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
     HttpServletResponse httpResponse = (HttpServletResponse) response;
-    httpResponse.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins for now
+    httpResponse.setHeader("Access-Control-Allow-Origin", "https://dashboard-frontend.vercel.app"); // Allow all origins for now
     // Or specifically set it to your frontend URL:
     // httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
     httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
