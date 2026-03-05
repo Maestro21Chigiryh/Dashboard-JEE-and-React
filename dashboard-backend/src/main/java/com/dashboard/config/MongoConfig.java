@@ -68,6 +68,8 @@
 
 package com.dashboard.config;
 
+import java.util.ArrayList;
+
 import org.bson.Document;
 
 import com.mongodb.client.MongoClient;
@@ -89,26 +91,26 @@ public class MongoConfig {
     private MongoCollection<Document> transactionCollection;
 
     public void init() {
-
         if (mongoClient == null) {
-
-            // récupérer l'URI depuis Render
             String uri = System.getenv("MONGO_URI");
-
-            // fallback pour développement local
             if (uri == null || uri.isEmpty()) {
                 uri = "mongodb://localhost:27017";
             }
 
             mongoClient = MongoClients.create(uri);
-
             database = mongoClient.getDatabase("dashboard");
-
             clientCollection = database.getCollection("clients");
-
             transactionCollection = database.getCollection("transactions");
 
             System.out.println("✅ MongoDB connected to: " + uri);
+
+            // 🔹 Liste des collections existantes
+            var collections = database.listCollectionNames().into(new ArrayList<>());
+            System.out.println("Collections in 'dashboard': " + collections);
+
+            // 🔹 Test simple : compter les clients
+            long count = clientCollection.countDocuments();
+            System.out.println("Number of documents in clients collection: " + count);
         }
     }
 

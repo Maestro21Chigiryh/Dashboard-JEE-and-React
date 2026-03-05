@@ -62,19 +62,17 @@ public class RedisConfig {
             poolConfig.setMaxIdle(5);
             poolConfig.setMinIdle(1);
 
-            // 🔹 Détection automatique de l'environnement
-            String redisUrl = System.getenv("REDIS_URL"); // Pour Render / Upstash
-            String redisHost = "localhost";               // fallback local
+            String redisUrl = System.getenv("REDIS_URL"); // URL Upstash
+            String redisHost = "localhost";
             int redisPort = 6379;
             String redisPassword = null;
 
             if (redisUrl != null && !redisUrl.isEmpty()) {
-                // Exemple d'URL Upstash : redis://default:password@us1-upstash.io:6379
                 try {
                     java.net.URI uri = new java.net.URI(redisUrl);
                     redisHost = uri.getHost();
                     redisPort = uri.getPort();
-                    String userInfo = uri.getUserInfo(); // default:password
+                    String userInfo = uri.getUserInfo();
                     if (userInfo != null && userInfo.contains(":")) {
                         redisPassword = userInfo.split(":", 2)[1];
                     }
@@ -90,6 +88,15 @@ public class RedisConfig {
             }
 
             System.out.println("✅ Redis initialized: " + redisHost + ":" + redisPort);
+
+            // 🔹 Test simple
+            try (var jedis = jedisPool.getResource()) {
+                jedis.set("test_key", "ok");
+                String value = jedis.get("test_key");
+                System.out.println("Redis test_key value: " + value);
+            } catch (Exception e) {
+                System.err.println("❌ Redis test failed: " + e.getMessage());
+            }
         }
     }
 
