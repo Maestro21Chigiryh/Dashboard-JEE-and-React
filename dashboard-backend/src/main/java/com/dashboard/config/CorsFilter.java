@@ -70,7 +70,7 @@ public class CorsFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         // Allow your frontend Vercel URL
-        String frontendUrl = "https://dashboard-frontend.vercel.app";
+        String frontendUrl = "https://dashboard-frontent.vercel.app";
 
         httpResponse.setHeader("Access-Control-Allow-Origin", frontendUrl);
         httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
