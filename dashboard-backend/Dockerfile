@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package
 
-FROM jetty:9.4-jre17
+FROM jetty:11-jre17
 COPY --from=build /app/target/*.war /var/lib/jetty/webapps/root.war
 
 EXPOSE 8080
