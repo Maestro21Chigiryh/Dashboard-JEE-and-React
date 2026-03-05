@@ -107,6 +107,8 @@ public class MongoConfig {
             clientCollection = database.getCollection("clients");
 
             transactionCollection = database.getCollection("transactions");
+
+            System.out.println("✅ MongoDB connected to: " + uri);
         }
     }
 
