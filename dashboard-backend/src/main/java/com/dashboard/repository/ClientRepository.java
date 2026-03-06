@@ -65,14 +65,14 @@ public class ClientRepository {
 
     public void generateRandomClients(int count) {
         List<Document> documents = new ArrayList<>();
-        int batchSize = 1000;
+        int batchSize = 200;
         
         for (int i = 0; i < count; i++) {
             Client client = generateRandomClient();
             Document document = clientToDocument(client);
             documents.add(document);
             
-            // Insert in batches of 1000 to improve performance
+            // Insert in batches of 200 to improve performance
             if (documents.size() >= batchSize || i == count - 1) {
                 if (!documents.isEmpty()) {
                     clientCollection.insertMany(documents);
@@ -117,10 +117,10 @@ public class ClientRepository {
         String address = faker.address().fullAddress();
         
         double purchaseAmount = Math.round(random.nextDouble(100, 10000) * 100) / 100.0;
-        int purchaseCount = random.nextInt(1, 50);
+        int purchaseCount = random.nextInt(1, 10);
         
         LocalDate now = LocalDate.now();
-        LocalDate registrationDate = now.minusDays(random.nextInt(1, 1000));
+        LocalDate registrationDate = now.minusDays(random.nextInt(1, 365));
         
         // Correction ici : s'assurer que la période est d'au moins 1 jour
         long daysUntilNow = registrationDate.until(now).getDays();
