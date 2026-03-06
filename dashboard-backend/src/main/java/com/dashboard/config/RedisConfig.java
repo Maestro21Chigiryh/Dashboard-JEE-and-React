@@ -50,6 +50,8 @@ import jakarta.inject.Singleton;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.net.URI;
+
 @ApplicationScoped
 public class RedisConfig {
 
@@ -57,45 +59,48 @@ public class RedisConfig {
 
     public void init() {
         if (jedisPool == null) {
-            JedisPoolConfig poolConfig = new JedisPoolConfig();
-            poolConfig.setMaxTotal(10);
-            poolConfig.setMaxIdle(5);
-            poolConfig.setMinIdle(1);
 
-            String redisUrl = System.getenv("REDIS_URL"); // URL Upstash
-            String redisHost = "localhost";
-            int redisPort = 6379;
-            String redisPassword = null;
+            try {
 
-            if (redisUrl != null && !redisUrl.isEmpty()) {
-                try {
-                    java.net.URI uri = new java.net.URI(redisUrl);
-                    redisHost = uri.getHost();
-                    redisPort = uri.getPort();
-                    String userInfo = uri.getUserInfo();
-                    if (userInfo != null && userInfo.contains(":")) {
-                        redisPassword = userInfo.split(":", 2)[1];
-                    }
-                } catch (Exception e) {
-                    System.err.println("⚠️ Redis URL invalide : " + e.getMessage());
+                JedisPoolConfig poolConfig = new JedisPoolConfig();
+                poolConfig.setMaxTotal(10);
+                poolConfig.setMaxIdle(5);
+                poolConfig.setMinIdle(1);
+
+                String redisUrl = System.getenv("REDIS_URL");
+
+                if (redisUrl == null || redisUrl.isEmpty()) {
+                    throw new RuntimeException("REDIS_URL non définie");
                 }
-            }
 
-            if (redisPassword != null) {
-                jedisPool = new JedisPool(poolConfig, redisHost, redisPort, 2000, redisPassword);
-            } else {
-                jedisPool = new JedisPool(poolConfig, redisHost, redisPort);
-            }
+                URI uri = new URI(redisUrl);
 
-            System.out.println("✅ Redis initialized: " + redisHost + ":" + redisPort);
+                String host = uri.getHost();
+                int port = uri.getPort();
+                String password = uri.getUserInfo().split(":", 2)[1];
 
-            // 🔹 Test simple
-            try (var jedis = jedisPool.getResource()) {
-                jedis.set("test_key", "ok");
-                String value = jedis.get("test_key");
-                System.out.println("Redis test_key value: " + value);
+                boolean ssl = uri.getScheme().equals("rediss");
+
+                jedisPool = new JedisPool(
+                        poolConfig,
+                        host,
+                        port,
+                        2000,
+                        password,
+                        ssl
+                );
+
+                System.out.println("✅ Redis connecté : " + host + ":" + port + " SSL=" + ssl);
+
+                // test connexion
+                try (var jedis = jedisPool.getResource()) {
+                    jedis.set("redis_test", "ok");
+                    System.out.println("Redis test: " + jedis.get("redis_test"));
+                }
+
             } catch (Exception e) {
-                System.err.println("❌ Redis test failed: " + e.getMessage());
+                System.err.println("❌ Redis init error: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }

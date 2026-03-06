@@ -42,7 +42,6 @@ const TopClients = () => {
     }
   };
   
-  // Le reste de votre code reste inchangé
   
   const handleGenerateClients = async () => {
     try {
