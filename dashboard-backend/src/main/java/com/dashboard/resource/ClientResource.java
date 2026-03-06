@@ -92,7 +92,7 @@ public Response getTopClients(@QueryParam("limit") @DefaultValue("5") int limit)
     
     @POST
     @Path("/generate")
-    public Response generateClients(@QueryParam("count") @DefaultValue("1000") int count) {
+    public Response generateClients(@QueryParam("count") @DefaultValue("500") int count) {
         clientService.generateClients(count);
         
         Map<String, Object> response = new HashMap<>();

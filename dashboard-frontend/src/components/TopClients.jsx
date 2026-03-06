@@ -226,7 +226,7 @@ const TopClients = () => {
 
       const interval = setInterval(() => {
         setProgress(prev => Math.min(prev + 5, 95));
-      }, 500);
+      }, 300);
 
       await generateClients(10000);
       clearInterval(interval);
@@ -262,90 +262,77 @@ const TopClients = () => {
   }, []);
 
   if (loading && !generating && !resetting) {
-    return <div className="loading-screen"><div className="loading-spinner"></div>Loading top clients...</div>;
+    return <div className="loading-screen">Loading top clients...</div>;
   }
 
   return (
-    <div className="dashboard-container">
-      <div className="top-clients-header">
-        <h2>Client Dashboard</h2>
-        <div className="client-stats">
-          <span>Total Clients: {clientCount}</span>
-          <div className="button-group">
-            <button
-              onClick={handleGenerateClients}
-              disabled={generating || clientCount > 0}
-              className="primary-button"
-            >
-              {generating ? 'Generating...' : 'Generate 10,000 Clients'}
-            </button>
-            <button
-              onClick={handleResetClients}
-              disabled={resetting || clientCount === 0}
-              className="danger-button"
-            >
-              {resetting ? 'Resetting...' : 'Reset Clients'}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {generating && (
-        <div className="progress-container" style={{ margin: '15px 0' }}>
-          <div className="progress-bar" style={{ width: `${progress}%`, height: '8px', background: 'var(--secondary-color)', borderRadius: '4px', transition: 'width 0.3s' }}></div>
-          <div className="progress-text" style={{ fontSize: '14px', marginTop: '5px' }}>{progress}% - Generating clients and transactions...</div>
-        </div>
-      )}
-
-      {error && <div className="error-message">{error}</div>}
-
-      <div className="dashboard-grid">
-        {/* Top clients table */}
-        <div className="top-clients-container">
+    <div className="dashboard-grid">
+      
+      {/* Card Table */}
+      <div className="top-clients-card">
+        <div className="top-clients-header">
           <h3>Top 5 Clients</h3>
-          <div className="top-clients-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Purchase Amount</th>
-                  <th>Purchase Count</th>
-                  <th>Last Purchase</th>
-                </tr>
-              </thead>
-              <tbody>
-                {clients.length > 0 ? (
-                  clients.map((client, index) => (
-                    <tr key={`client-${index}-${client.name?.replace(/\s+/g,'') || 'unknown'}`}>
-                      <td>{index + 1}</td>
-                      <td>{client.name}</td>
-                      <td>{client.email}</td>
-                      <td>€{client.purchaseAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                      <td>{client.purchaseCount}</td>
-                      <td>{client.lastPurchaseDate}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="no-data">
-                      No clients found. {clientCount === 0 && 'Click "Generate Clients" to create sample data.'}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          <div className="client-actions">
+            <span>Total: {clientCount}</span>
+            <div className="button-group">
+              <button onClick={handleGenerateClients} disabled={generating || clientCount > 0} className="primary-button">
+                {generating ? 'Generating...' : 'Generate 10,000 Clients'}
+              </button>
+              <button onClick={handleResetClients} disabled={resetting || clientCount === 0} className="danger-button">
+                {resetting ? 'Resetting...' : 'Reset Clients'}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Chart */}
-        {clients.length > 0 && (
-          <div className="top-clients-container">
-            <TransactionBarChart />
+        {generating && (
+          <div className="progress-container">
+            <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+            <div className="progress-text">{progress}% - Generating clients...</div>
           </div>
         )}
+
+        {error && <div className="error-message">{error}</div>}
+
+        <div className="top-clients-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Purchase Amount</th>
+                <th>Purchase Count</th>
+                <th>Last Purchase</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clients.length > 0 ? clients.map((c,i) => (
+                <tr key={i}>
+                  <td>{i+1}</td>
+                  <td>{c.name}</td>
+                  <td>{c.email}</td>
+                  <td>€{c.purchaseAmount.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+                  <td>{c.purchaseCount}</td>
+                  <td>{c.lastPurchaseDate}</td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan="6" className="no-data">
+                    No clients found. {clientCount === 0 && 'Click "Generate Clients" to create sample data.'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Card Chart */}
+      <div className="top-clients-card">
+        <TransactionBarChart />
+      </div>
+
     </div>
   );
 };
